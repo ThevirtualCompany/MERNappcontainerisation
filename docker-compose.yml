@@ -1,0 +1,32 @@
+services:
+  client:
+    build: ./client
+    container_name: client
+    networks:
+     - mern-stack-net
+    ports:
+      - "8000:8000"
+  server:
+    build: ./server
+    container_name: server
+    networks:
+     - mern-stack-net
+    depends_on:
+     - mongo
+    ports:
+      - "3000:3000"
+  mongo:
+    image : mongo
+    container_name: mongodb
+    networks:
+     - mern-stack-net
+    ports:
+      - '27017:27017'
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /home/ubuntu/mongodb/database:/data/db
+networks:
+  mern-stack-net:
+    driver: bridge
