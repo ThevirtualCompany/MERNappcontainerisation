@@ -2,42 +2,31 @@ services:
   client:
     build: ./client
     container_name: client
-    networks:
-     - mern-stack-net
     ports:
       - "8000:8000"
   server:
     build: ./server
     container_name: server
-    networks:
-     - mern-stack-net
     depends_on:
-      mongodb:
+      mongo:
         condition: service_healthy
     ports:
       - "3000:3000"
-  mongodb:
+  mongo:
     image : mongo
-    container_name: mongo-db
+    container_name: mongodb
     healthcheck:
       test:
       - CMD
-      - mongod
+      - mongo
       - --eval
       - "db.adminCommand('ping')"
       interval: 10s
       timeout: 10s
-      retries: 5
+      retries: 3
       start_period: 20s
-    networks:
-      - mern-stack-net
-    ports:
-      - '27017:27017'
     environment:
       - PUID=1000
       - PGID=1000
     volumes:
       - /home/ubuntu/mongodb/database:/data/db
-networks:
-  mern-stack-net:
-    driver: bridge
