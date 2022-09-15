@@ -12,14 +12,25 @@ services:
     networks:
      - mern-stack-net
     depends_on:
-     - mongo
+      mongodb:
+        condition: service_healthy
     ports:
       - "3000:3000"
-  mongo:
+  mongodb:
     image : mongo
-    container_name: mongodb
+    container_name: mongo-db
+    healthcheck:
+      test:
+      - CMD
+      - mongod
+      - --eval
+      - "db.adminCommand('ping')"
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
     networks:
-     - mern-stack-net
+      - mern-stack-net
     ports:
       - '27017:27017'
     environment:
